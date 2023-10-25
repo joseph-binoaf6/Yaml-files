@@ -1,0 +1,118 @@
+pool:
+  name: Sirius
+  demands:
+  - msbuild
+  - DotNetFramework
+
+variables:
+  Branch: 'UK6_153'
+  BuildPlatform: 'Any CPU'
+  BuildConfiguration: 'Release'
+
+steps:
+- task: MSBuild@1
+  displayName: 'Build solution Rrp.CoreComponents.sln'
+  inputs:
+    solution: '$/Sirius/$(Branch)/build_process/solutions/Rrp.CoreComponents.sln'
+    msbuildLocationMethod: location
+    msbuildLocation: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin/'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArguments: '/p:SkipInvalidConfigurations=true /p:VisualStudioVersion=14.0 /p:DebugSymbols=true /p:ExcludeGeneratedDebugSymbol=false'
+    createLogFile: true
+
+- task: MSBuild@1
+  displayName: 'Build solution Rrp.BusinessService.sln'
+  inputs:
+    solution: '$/Sirius/$(Branch)/build_process/solutions/Rrp.BusinessService.sln'
+    msbuildLocationMethod: location
+    msbuildLocation: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin/'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArguments: '/p:SkipInvalidConfigurations=true /p:VisualStudioVersion=14.0 /p:DebugSymbols=true /p:ExcludeGeneratedDebugSymbol=false'
+    createLogFile: true
+
+- task: MSBuild@1
+  displayName: 'Build solution Rrp.ProcessService.sln'
+  inputs:
+    solution: '$/Sirius/$(Branch)/build_process/solutions/Rrp.ProcessService.sln'
+    msbuildLocationMethod: location
+    msbuildLocation: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin/'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArguments: '/p:SkipInvalidConfigurations=true /p:VisualStudioVersion=14.0 /p:DebugSymbols=true /p:ExcludeGeneratedDebugSymbol=false'
+    createLogFile: true
+
+- task: MSBuild@1
+  displayName: 'Build solution Rrp.eCOMFacade.sln'
+  inputs:
+    solution: '$/Sirius/$(Branch)/build_process/solutions/Rrp.eCOMFacade.sln'
+    msbuildLocationMethod: location
+    msbuildLocation: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin/'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArguments: '/p:SkipInvalidConfigurations=true /p:VisualStudioVersion=14.0 /p:DebugSymbols=true /p:ExcludeGeneratedDebugSymbol=false'
+    createLogFile: true
+
+- task: MSBuild@1
+  displayName: 'Build solution Rrp.WindowsServices.sln'
+  inputs:
+    solution: '$/Sirius/$(Branch)/build_process/solutions/Rrp.WindowsServices.sln'
+    msbuildLocationMethod: location
+    msbuildLocation: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin/'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArguments: '/p:SkipInvalidConfigurations=true /p:VisualStudioVersion=14.0 /p:DebugSymbols=true /p:ExcludeGeneratedDebugSymbol=false'
+    createLogFile: true
+
+- task: MSBuild@1
+  displayName: 'Build solution Rrp.NavRouters.sln'
+  inputs:
+    solution: '$/Sirius/$(Branch)/build_process/solutions/Rrp.NavRouters.sln'
+    msbuildLocationMethod: location
+    msbuildLocation: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin/'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArguments: '/p:SkipInvalidConfigurations=true /p:VisualStudioVersion=14.0 /p:DebugSymbols=true /p:ExcludeGeneratedDebugSymbol=false'
+    createLogFile: true
+
+- task: MSBuild@1
+  displayName: 'Build solution Rrp.UIPC.sln'
+  inputs:
+    solution: '$/Sirius/$(Branch)/build_process/solutions/Rrp.UIPC.sln'
+    msbuildLocationMethod: location
+    msbuildLocation: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin/'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArguments: '/p:SkipInvalidConfigurations=true /p:VisualStudioVersion=14.0 /p:DebugSymbols=true /p:ExcludeGeneratedDebugSymbol=false'
+    createLogFile: true
+
+- task: MSBuild@1
+  displayName: 'Build solution Rrp.Web.sln'
+  inputs:
+    solution: '$/Sirius/$(Branch)/build_process/solutions/Rrp.Web.sln'
+    msbuildLocationMethod: location
+    msbuildLocation: 'C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin/'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    msbuildArguments: '/p:SkipInvalidConfigurations=true /p:VisualStudioVersion=14.0 /p:DebugSymbols=true /p:ExcludeGeneratedDebugSymbol=false'
+    createLogFile: true
+
+- task: PowerShell@1
+  displayName: 'Prepare Build For Output'
+  inputs:
+    scriptName: '$/Sirius/$(Branch)/build_process/Scripts/PrepareBuildForOutput.ps1'
+    arguments: '$(Build.SourcesDirectory) $(Build.StagingDirectory)'
+
+- task: PowerShell@1
+  displayName: 'Copy Build For Output'
+  inputs:
+    scriptName: '$/Sirius/$(Branch)/build_process/Scripts/CopyBuildForOutput.ps1'
+    arguments: '$(Build.StagingDirectory) $(TargetOutputFolder) $(Branch)'
+
+- task: benjhuser.tfs-extensions-build-tasks.trigger-build-task.TriggerBuild@4
+  displayName: 'Trigger a new build of UK6_153_PatchBuild'
+  inputs:
+    buildDefinition: 'UK6_153_PatchBuild'
+    authenticationMethod: 'OAuth Token'
+
